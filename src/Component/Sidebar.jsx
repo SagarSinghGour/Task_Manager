@@ -144,9 +144,10 @@ transition:left .3s ease;
 
 .sidebar{
 display:flex;
-flex-direction:column;
-height:100%;
-padding:25px 18px;
+    flex-direction:column;
+    height:100dvh;
+    padding:25px 18px;
+    overflow-y:auto;
 }
 
 .logo{
@@ -195,16 +196,17 @@ font-weight:bold;
 
 .logout-btn{
 margin-top:auto;
-padding:15px;
-background:#6b7280;
-border:none;
-border-radius:12px;
-color:#fff;
-display:flex;
-align-items:center;
-gap:15px;
-cursor:pointer;
-transition:.3s;
+    padding:15px;
+    background:#6b7280;
+    border:none;
+    border-radius:12px;
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:15px;
+    cursor:pointer;
+    flex-shrink:0;
 }
 
 .logout-btn:hover{
@@ -264,7 +266,8 @@ color:#4f46e5;
 }
 
 .sidebar-container{
-left:-270px;
+height:100dvh;
+    overflow-y:auto;
 }
 
 .show-sidebar{
@@ -272,7 +275,8 @@ left:0;
 }
 
 .sidebar{
-padding-top:80px;
+  padding-top:80px;
+    padding-bottom:20px;
 }
 
 }
