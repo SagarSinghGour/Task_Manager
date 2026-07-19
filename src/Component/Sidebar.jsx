@@ -85,9 +85,8 @@ export default function Sidebar() {
                   <Link
                     to={item.path}
                     onClick={closeSidebar}
-                    className={`sidebar-link ${
-                      location.pathname === item.path ? "active-link" : ""
-                    }`}
+                    className={`sidebar-link ${location.pathname === item.path ? "active-link" : ""
+                      }`}
                   >
                     <i className={`bi ${item.icon}`}></i>
                     <span>{item.name}</span>
@@ -119,7 +118,7 @@ export default function Sidebar() {
       </aside>
 
       <style>{`
-*{
+ *{
 margin:0;
 padding:0;
 box-sizing:border-box;
@@ -132,15 +131,15 @@ display:none;
 /* Sidebar */
 
 .sidebar-container{
-width:auto;
-height:100vh;
-background:linear-gradient(180deg,#4f46e5,#4338ca);
 position:fixed;
 top:0;
 left:0;
-transition:left .3s ease;
+width:270px;
+height:100vh;
+background:linear-gradient(180deg,#4f46e5,#4338ca);
+overflow-y:auto;
 z-index:1050;
-box-shadow:0 0 20px rgba(0,0,0,.2);
+transition:left .3s ease;
 }
 
 .sidebar{
@@ -222,7 +221,7 @@ background:rgba(0,0,0,.45);
 z-index:1040;
 }
 
-/* ================= MOBILE ================= */
+/* Mobile */
 
 @media(max-width:991px){
 
@@ -238,7 +237,6 @@ align-items:center;
 justify-content:space-between;
 padding:0 20px;
 z-index:1100;
-box-shadow:0 2px 10px rgba(0,0,0,.15);
 }
 
 .mobile-navbar h4{
@@ -267,7 +265,6 @@ color:#4f46e5;
 
 .sidebar-container{
 left:-270px;
-top:0;
 }
 
 .show-sidebar{
@@ -280,7 +277,7 @@ padding-top:80px;
 
 }
 
-/* ================= DESKTOP ================= */
+/* Desktop */
 
 @media(min-width:992px){
 
@@ -290,8 +287,6 @@ display:none;
 
 .sidebar-container{
 left:0;
-position:relative;
-height:100vh;
 }
 
 }

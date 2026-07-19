@@ -1,5 +1,5 @@
 import React, { useState, createContext, useEffect } from "react";
-import { Route, Routes, useNavigate } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
 
 import Sidebar from "./Component/Sidebar";
 import Dashbord from "./Component/Dashbord";
@@ -14,17 +14,16 @@ import taskData from "./TaskData/DataApi";
 export const data = createContext();
 
 function App() {
+  const navigate = useNavigate();
+
   const [tasks, setTasks] = useState(taskData);
   const [filteredTasks, setFilteredTasks] = useState(taskData);
   const [filterStatus, setFilterStatus] = useState("all");
   const [headingName, setHeadingName] = useState("ALL");
 
-  // Read auth status from localStorage
   const [isAuth, setIsAuth] = useState(
     localStorage.getItem("isAuth") === "true"
   );
-
-  const navigate = useNavigate();
 
   // Login
   const loginUser = () => {
@@ -44,60 +43,81 @@ function App() {
   const filterTasks = (status) => {
     setFilterStatus(status);
 
-    if (status === "all") {
-      setFilteredTasks(tasks);
-      setHeadingName("ALL");
-    } else {
-      const filtered = tasks.filter(
-        (task) =>
-          task.status.toLowerCase() === status.toLowerCase()
-      );
+    const filtered =
+      status === "all"
+        ? tasks
+        : tasks.filter(
+            (task) =>
+              task.status.toLowerCase() === status.toLowerCase()
+          );
 
-      setFilteredTasks(filtered);
-      setHeadingName(status.toUpperCase());
-    }
+    setFilteredTasks(filtered);
+    setHeadingName(status === "all" ? "ALL" : status.toUpperCase());
 
     navigate("/data");
   };
 
-  // Change Status
+  // Change Task Status
   const statusChange = (id, newStatus) => {
     setTasks((prev) =>
       prev.map((task) =>
-        task.id === id
-          ? { ...task, status: newStatus }
-          : task
+        task.id === id ? { ...task, status: newStatus } : task
       )
     );
   };
 
-  // Update filtered tasks
+  // Update filtered tasks whenever tasks/status changes
   useEffect(() => {
-    if (filterStatus === "all") {
-      setFilteredTasks(tasks);
-    } else {
-      setFilteredTasks(
-        tasks.filter(
-          (task) =>
-            task.status.toLowerCase() ===
-            filterStatus.toLowerCase()
-        )
-      );
-    }
+    setFilteredTasks(
+      filterStatus === "all"
+        ? tasks
+        : tasks.filter(
+            (task) =>
+              task.status.toLowerCase() === filterStatus.toLowerCase()
+          )
+    );
   }, [tasks, filterStatus]);
 
-  // Redirect after refresh
-  useEffect(() => {
-    if (!isAuth) {
-      navigate("/login");
-    }
-  }, [isAuth, navigate]);
-
   const Layout = ({ children }) => (
-    <div className="d-flex">
-      <Sidebar />
-      <div style={{ flex: 1 }}>{children}</div>
-    </div>
+  <div className="app-layout">
+    <Sidebar />
+
+    <main className="main-content">
+      {children}
+    </main>
+
+    <style>{`
+      *{
+        box-sizing:border-box;
+      }
+
+      .app-layout{
+        display:flex;
+        min-height:100vh;
+        width:100%;
+      }
+
+      .main-content{
+        flex:1;
+        margin-left:270px;
+        padding:25px;
+        background:#f5f7fb;
+        min-height:100vh;
+        overflow-x:hidden;
+      }
+
+      @media(max-width:991px){
+
+        .main-content{
+          margin-left:0;
+          margin-top:65px;
+          padding:15px;
+        }
+
+      }
+    `}</style>
+  </div>
+
   );
 
   return (
@@ -115,80 +135,34 @@ function App() {
       }}
     >
       <Routes>
-        {/* Login */}
         <Route
           path="/login"
           element={isAuth ? <Layout><Dashbord /></Layout> : <Login />}
         />
 
-        {/* Dashboard */}
         <Route
           path="/"
-          element={
-            isAuth ? (
-              <Layout>
-                <Dashbord />
-              </Layout>
-            ) : (
-              <Login />
-            )
-          }
+          element={isAuth ? <Layout><Dashbord /></Layout> : <Login />}
         />
 
-        {/* Add Task */}
         <Route
           path="/addTask"
-          element={
-            isAuth ? (
-              <Layout>
-                <AddTask />
-              </Layout>
-            ) : (
-              <Login />
-            )
-          }
+          element={isAuth ? <Layout><AddTask /></Layout> : <Login />}
         />
 
-        {/* Data */}
         <Route
           path="/data"
-          element={
-            isAuth ? (
-              <Layout>
-                <DataTask />
-              </Layout>
-            ) : (
-              <Login />
-            )
-          }
+          element={isAuth ? <Layout><DataTask /></Layout> : <Login />}
         />
 
-        {/* Stats */}
         <Route
           path="/taskstats"
-          element={
-            isAuth ? (
-              <Layout>
-                <Taskstats />
-              </Layout>
-            ) : (
-              <Login />
-            )
-          }
+          element={isAuth ? <Layout><Taskstats /></Layout> : <Login />}
         />
 
-        {/* Admin */}
         <Route
           path="/admin"
-          element={
-            isAuth ? (
-              <Layout>
-                <AdminPanel />
-              </Layout>
-            ) : (
-              <Login />
-            )
-          }
+          element={isAuth ? <Layout><AdminPanel /></Layout> : <Login />}
         />
       </Routes>
     </data.Provider>
