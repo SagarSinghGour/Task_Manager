@@ -132,7 +132,7 @@ display:none;
 /* Sidebar */
 
 .sidebar-container{
-width:270px;
+width:auto;
 height:100vh;
 background:linear-gradient(180deg,#4f46e5,#4338ca);
 position:fixed;
