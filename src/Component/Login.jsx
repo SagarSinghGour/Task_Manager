@@ -1,7 +1,8 @@
 import React, { useState, useContext } from "react";
 import { data } from "../App";
+import { Globe } from "lucide-react";
 
-export default function Login() {
+const Login = () => {
   const { loginUser } = useContext(data);
 
   const [isLogin, setIsLogin] = useState(true);
@@ -12,28 +13,70 @@ export default function Login() {
     password: "",
   });
 
-  // Input Change
   const handleChange = (e) => {
-    const { name, value } = e.target;
-
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
   };
 
-  // Submit
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (formData.email && formData.password) {
-      if (isLogin) {
-        loginUser(); // ✅ from context
-         
-      } else {
-        alert("Account Created Successfully");
-        loginUser(); // optional: auto-login after register
+    // Validation
+    if (!formData.email || !formData.password) {
+      alert("Please fill all required fields");
+      return;
+    }
+
+    // LOGIN
+    if (isLogin) {
+      const user = JSON.parse(localStorage.getItem("user"));
+
+      if (!user) {
+        alert("Please register first.");
+        return;
       }
+
+      if (
+        user.email === formData.email &&
+        user.password === formData.password
+      ) {
+        alert("Login Successful");
+        loginUser();
+      } else {
+        alert("Invalid Email or Password");
+      }
+    }
+
+    // REGISTER
+    else {
+      if (!formData.name) {
+        alert("Please enter your name.");
+        return;
+      }
+
+      const existingUser = JSON.parse(localStorage.getItem("user"));
+
+      if (
+        existingUser &&
+        existingUser.email === formData.email
+      ) {
+        alert("User already exists.");
+        return;
+      }
+
+      const newUser = {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+      };
+
+      localStorage.setItem("user", JSON.stringify(newUser));
+
+      alert("Registration Successful");
+
+      setIsLogin(true);
     }
 
     setFormData({
@@ -43,210 +86,142 @@ export default function Login() {
     });
   };
 
-  return (
-    <>
-      <div className="auth-container">
-        <div className="auth-card">
-          {/* LEFT SIDE */}
-          <div className="auth-left">
-            <h1>Task Manager</h1>
+   return (
+  <div
+    className="d-flex justify-content-center align-items-center vh-100"
+    style={{ background: "#eef2ff" }}
+  >
+    <div
+      className="row shadow-lg rounded-4 overflow-hidden bg-white"
+      style={{ width: "900px", minHeight: "550px" }}
+    >
+      {/* Left Side */}
+      <div
+        className="col-md-6 d-flex flex-column justify-content-center align-items-center text-center text-white p-5"
+        style={{
+          background: "linear-gradient(135deg,#4f46e5,#7c3aed)",
+        }}
+      >
+        <h1 className="fw-bold mb-4">Task Manager</h1>
 
-            <p>
-              Manage your tasks, projects and team with fully dynamic dashboard.
-            </p>
+        <p className="fs-5">
+          Manage your tasks, projects and team with fully dynamic dashboard.
+        </p>
 
-            <img
-              src="https://cdn-icons-png.flaticon.com/512/9068/9068756.png"
-              alt="dashboard"
-            />
-          </div>
-
-          {/* RIGHT SIDE */}
-          <div className="auth-right">
-            <h2>{isLogin ? "Login" : "Create Account"}</h2>
-
-            <form onSubmit={handleSubmit}>
-              {!isLogin && (
-                <div className="input-box">
-                  <label>Name</label>
-                  <input
-                    type="text"
-                    name="name"
-                    placeholder="Enter your name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-              )}
-
-              <div className="input-box">
-                <label>Email</label>
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="Enter your email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-
-              <div className="input-box">
-                <label>Password</label>
-                <input
-                  type="password"
-                  name="password"
-                  placeholder="Enter password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-
-              <button type="submit" className="auth-btn">
-                {isLogin ? "Login" : "Register"}
-              </button>
-            </form>
-
-            <div className="bottom-text">
-              {isLogin
-                ? "Don't have an account?"
-                : "Already have an account?"}
-
-              <span onClick={() => setIsLogin(!isLogin)}>
-                {isLogin ? " Register" : " Login"}
-              </span>
-            </div>
-          </div>
-        </div>
+      <div
+  className="rounded-circle bg-dark d-flex justify-content-center align-items-center mt-4"
+  style={{
+    width: "250px",
+    height: "250px",
+    background: "#000",
+  }}
+>
+  <Globe
+    size={130}
+    strokeWidth={2.2}
+    color="#7C3AED"
+  />
+</div>
       </div>
 
-      {/* CSS */}
-      <style>{`
-        *{
-          margin:0;
-          padding:0;
-          box-sizing:border-box;
-        }
+      {/* Right Side */}
+      <div className="col-md-6 d-flex align-items-center">
+        <div className="w-100 px-5">
 
-        .auth-container{
-          width:100%;
-          min-height:100vh;
-          background:#eef2ff;
-          display:flex;
-          justify-content:center;
-          align-items:center;
-          padding:20px;
-        }
+          <h1 className="fw-bold mb-5">
+            {isLogin ? "Login" : "Register"}
+          </h1>
 
-        .auth-card{
-          width:100%;
-          max-width:1050px;
-          background:white;
-          border-radius:30px;
-          overflow:hidden;
-          display:grid;
-          grid-template-columns:1fr 1fr;
-          box-shadow:0 10px 40px rgba(0,0,0,0.1);
-        }
+          <form onSubmit={handleSubmit}>
 
-        .auth-left{
-          background:linear-gradient(135deg,#4f46e5,#7c3aed);
-          color:white;
-          padding:60px 40px;
-          display:flex;
-          flex-direction:column;
-          justify-content:center;
-          align-items:center;
-          text-align:center;
-        }
+            {!isLogin && (
+              <div className="mb-4">
+                <label className="fw-semibold mb-2">
+                  Name
+                </label>
 
-        .auth-left h1{
-          font-size:38px;
-          margin-bottom:20px;
-        }
+                <input
+                  type="text"
+                  className="form-control form-control-lg"
+                  name="name"
+                  placeholder="Enter your name"
+                  value={formData.name}
+                  onChange={handleChange}
+                />
+              </div>
+            )}
 
-        .auth-left p{
-          font-size:17px;
-          line-height:1.7;
-          margin-bottom:40px;
-        }
+            <div className="mb-4">
+              <label className="fw-semibold mb-2">
+                Email
+              </label>
 
-        .auth-left img{
-          width:280px;
-          max-width:100%;
-        }
+              <input
+                type="email"
+                className="form-control form-control-lg"
+                name="email"
+                placeholder="Enter your email"
+                value={formData.email}
+                onChange={handleChange}
+              />
+            </div>
 
-        .auth-right{
-          padding:60px 40px;
-          display:flex;
-          flex-direction:column;
-          justify-content:center;
-        }
+            <div className="mb-4">
+              <label className="fw-semibold mb-2">
+                Password
+              </label>
 
-        .auth-right h2{
-          font-size:34px;
-          margin-bottom:35px;
-        }
+              <input
+                type="password"
+                className="form-control form-control-lg"
+                name="password"
+                placeholder="Enter password"
+                value={formData.password}
+                onChange={handleChange}
+              />
+            </div>
 
-        .input-box{
-          margin-bottom:22px;
-        }
+            <button
+              type="submit"
+              className="btn btn-lg w-100 text-white"
+              style={{
+                background: "#4f46e5",
+                border: "none",
+                borderRadius: "12px",
+              }}
+            >
+              {isLogin ? "Login" : "Register"}
+            </button>
 
-        .input-box label{
-          display:block;
-          margin-bottom:8px;
-          font-weight:600;
-        }
+          </form>
 
-        .input-box input{
-          width:100%;
-          padding:14px;
-          border:1px solid #d1d5db;
-          border-radius:12px;
-          outline:none;
-        }
+          <p className="text-center mt-4 mb-0">
+            {isLogin
+              ? "Don't have an account?"
+              : "Already have an account?"}
 
-        .input-box input:focus{
-          border-color:#4f46e5;
-          box-shadow:0 0 0 3px rgba(79,70,229,0.2);
-        }
+            <span
+              className="fw-bold ms-2"
+              role="button"
+              style={{ color: "#4f46e5" }}
+              onClick={() => {
+                setIsLogin(!isLogin);
+                setFormData({
+                  name: "",
+                  email: "",
+                  password: "",
+                });
+              }}
+            >
+              {isLogin ? "Register" : "Login"}
+            </span>
+          </p>
 
-        .auth-btn{
-          width:100%;
-          padding:15px;
-          border:none;
-          border-radius:14px;
-          background:#4f46e5;
-          color:white;
-          font-size:17px;
-          font-weight:600;
-          margin-top:10px;
-        }
+        </div>
+      </div>
+    </div>
+  </div>
+);
+};
 
-        .auth-btn:hover{
-          background:#4338ca;
-        }
-
-        .bottom-text{
-          margin-top:25px;
-          text-align:center;
-          color:#6b7280;
-        }
-
-        .bottom-text span{
-          color:#4f46e5;
-          font-weight:600;
-          cursor:pointer;
-        }
-
-        @media(max-width:900px){
-          .auth-card{
-            grid-template-columns:1fr;
-          }
-        }
-      `}</style>
-    </>
-  );
-}
+export default Login;

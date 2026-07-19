@@ -18,20 +18,29 @@ function App() {
   const [filteredTasks, setFilteredTasks] = useState(taskData);
   const [filterStatus, setFilterStatus] = useState("all");
   const [headingName, setHeadingName] = useState("ALL");
-  const [isAuth, setIsAuth] = useState(false);
+
+  // Read auth status from localStorage
+  const [isAuth, setIsAuth] = useState(
+    localStorage.getItem("isAuth") === "true"
+  );
 
   const navigate = useNavigate();
 
+  // Login
   const loginUser = () => {
     setIsAuth(true);
+    localStorage.setItem("isAuth", "true");
     navigate("/");
   };
 
+  // Logout
   const logoutUser = () => {
     setIsAuth(false);
+    localStorage.removeItem("isAuth");
     navigate("/login");
   };
 
+  // Filter Tasks
   const filterTasks = (status) => {
     setFilterStatus(status);
 
@@ -51,33 +60,43 @@ function App() {
     navigate("/data");
   };
 
-  const statusChange = (id, newstatus) => {
-    setTasks(
-      tasks.map((a) =>
-        a.id === id ? { ...a, status: newstatus } : a
+  // Change Status
+  const statusChange = (id, newStatus) => {
+    setTasks((prev) =>
+      prev.map((task) =>
+        task.id === id
+          ? { ...task, status: newStatus }
+          : task
       )
     );
   };
 
+  // Update filtered tasks
   useEffect(() => {
     if (filterStatus === "all") {
       setFilteredTasks(tasks);
     } else {
       setFilteredTasks(
         tasks.filter(
-          (t) =>
-            t.status.toLowerCase() === filterStatus.toLowerCase()
+          (task) =>
+            task.status.toLowerCase() ===
+            filterStatus.toLowerCase()
         )
       );
     }
   }, [tasks, filterStatus]);
 
+  // Redirect after refresh
+  useEffect(() => {
+    if (!isAuth) {
+      navigate("/login");
+    }
+  }, [isAuth, navigate]);
+
   const Layout = ({ children }) => (
     <div className="d-flex">
       <Sidebar />
-      <div style={{ flex: 1 }}>
-        {children}
-      </div>
+      <div style={{ flex: 1 }}>{children}</div>
     </div>
   );
 
@@ -92,11 +111,17 @@ function App() {
         statusChange,
         loginUser,
         logoutUser,
+        isAuth,
       }}
     >
       <Routes>
-        <Route path="/login" element={<Login />} />
+        {/* Login */}
+        <Route
+          path="/login"
+          element={isAuth ? <Layout><Dashbord /></Layout> : <Login />}
+        />
 
+        {/* Dashboard */}
         <Route
           path="/"
           element={
@@ -110,6 +135,7 @@ function App() {
           }
         />
 
+        {/* Add Task */}
         <Route
           path="/addTask"
           element={
@@ -123,6 +149,7 @@ function App() {
           }
         />
 
+        {/* Data */}
         <Route
           path="/data"
           element={
@@ -136,6 +163,7 @@ function App() {
           }
         />
 
+        {/* Stats */}
         <Route
           path="/taskstats"
           element={
@@ -149,6 +177,7 @@ function App() {
           }
         />
 
+        {/* Admin */}
         <Route
           path="/admin"
           element={

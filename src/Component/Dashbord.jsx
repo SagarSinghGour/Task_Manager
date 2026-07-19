@@ -256,6 +256,7 @@ export default function Dashbord() {
         .dashboard-container {
           width: 100%;
           padding: 25px;
+          margin-top: 20px;
           background: #f5f7fb;
           min-height: 100vh;
         }
