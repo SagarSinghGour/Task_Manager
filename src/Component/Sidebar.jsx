@@ -201,7 +201,7 @@ margin-top:auto;
     border:none;
     border-radius:12px;
     color:#fff;
-    display:flex;
+     
     align-items:center;
     justify-content:center;
     gap:15px;
@@ -266,8 +266,7 @@ color:#4f46e5;
 }
 
 .sidebar-container{
-height:100dvh;
-    overflow-y:auto;
+left:-270px;
 }
 
 .show-sidebar{
@@ -275,8 +274,7 @@ left:0;
 }
 
 .sidebar{
-  padding-top:80px;
-    padding-bottom:20px;
+padding-top:80px;
 }
 
 }
